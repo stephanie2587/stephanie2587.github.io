@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Velvet & Gold Perfumes</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            background: #f2f2f2;
+        }
+
+        header {
+            background: black;
+            color: white;
+            padding: 15px;
+        }
+
+        .logo {
+            float: left;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border: 2px solid gray;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .buscar {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .buscar input {
+            padding: 8px;
+            width: 250px;
+        }
+
+        .login, .carrito {
+            float: right;
+            margin-right: 10px;
+            position: relative;
+            top: -55px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        .menu {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .izquierda {
+            float: left;
+            margin-left: 40px;
+        }
+
+        .centro {
+            display: inline-block;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .derecha {
+            float: right;
+            margin-right: 40px;
+        }
+
+        .menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 22px;
+        }
+
+        .contenedor {
+            width: 850px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .tarjeta {
+            width: 220px;
+            background: white;
+            border: 1px solid gray;
+            display: inline-block;
+            margin: 15px;
+            padding: 10px;
+            vertical-align: top;
+        }
+
+        .tarjeta img {
+            width: 180px;
+            height: 180px;
+        }
+
+        .tarjeta p {
+            margin: 5px;
+        }
+
+        button {
+            background: #c9a227;
+            color: white;
+            padding: 6px;
+            margin: 2px;
+            cursor: pointer;
+        }
+
+        #carritoBox {
+            display: none;
+            background: white;
+            width: 400px;
+            margin: auto;
+            padding: 15px;
+            border: 1px solid gray;
+        }
+
+        .footer {
+            background: black;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">
+            <img src="Logo.jpeg">
+        </div>
+
+        <div class="buscar">
+            <input type="text" id="busqueda" placeholder="Buscar perfume">
+            <button onclick="buscar()">Buscar</button>
+        </div>
+
+        <div class="carrito" onclick="abrirCarrito()">
+            🛒 <span id="contador">0</span>
+        </div>
+
+        <div class="login" onclick="login()">
+            👤 <span id="usuario">Invitado</span>
+        </div>
+
+        <div class="clear"></div>
+
+        <div class="menu">
+            <div class="izquierda"><a href="#">Misión</a></div>
+            <div class="centro">Velvet & Gold</div>
+            <div class="derecha"><a href="#">Visión</a></div>
+            <div class="clear"></div>
+        </div>
+    </header>
+
+    <div id="carritoBox">
+        <h3>Carrito</h3>
+        <div id="listaCarrito"></div>
+        <p>Total: Q<span id="total">0</span></p>
+
+        <button onclick="comprarTodo()">Comprar todo</button>
+        <button onclick="cerrarCarrito()">Cerrar</button>
+    </div>
+
+    <script>
+        let carrito = [];
+        let contador = 0;
+
+        function agregar(nombre, precio) {
+            let existe = false;
+
+            for (let i = 0; i < carrito.length; i++) {
+                if (carrito[i].nombre == nombre) {
+                    carrito[i].cantidad++;
+                    existe = true;
+                }
+            }
+
+            if (!existe) {
+                carrito.push({ nombre: nombre, precio: precio, cantidad: 1 });
+            }
+
+            contador++;
+            document.getElementById("contador").innerText = contador;
+        }
+
+        function abrirCarrito() {
+            document.getElementById("carritoBox").style.display = "block";
+            mostrarCarrito();
+        }
+
+        function cerrarCarrito() {
+            document.getElementById("carritoBox").style.display = "none";
+        }
+
+        function mostrarCarrito() {
+            let lista = document.getElementById("listaCarrito");
+            lista.innerHTML = "";
+            let total = 0;
+
+            for (let i = 0; i < carrito.length; i++) {
+                lista.innerHTML += carrito[i].nombre +
+                    " x" + carrito[i].cantidad +
+                    " Q" + (carrito[i].precio * carrito[i].cantidad) +
+                    " <button onclick='sumar(" + i + ")'>+</button>" +
+                    " <button onclick='restar(" + i + ")'>-</button>" +
+                    " <button onclick='eliminar(" + i + ")'>X</button><br>";
+
+                total += carrito[i].precio * carrito[i].cantidad;
+            }
+
+            document.getElementById("total").innerText = total;
+        }
+
+        function sumar(i) {
+            carrito[i].cantidad++;
+            contador++;
+            document.getElementById("contador").innerText = contador;
+            mostrarCarrito();
+        }
+
+        function restar(i) {
+            if (carrito[i].cantidad > 1) {
+                carrito[i].cantidad--;
+                contador--;
+            } else {
+                eliminar(i);
+            }
+
+            document.getElementById("contador").innerText = contador;
+            mostrarCarrito();
+        }
+
+        function eliminar(i) {
+            contador -= carrito[i].cantidad;
+            carrito.splice(i, 1);
+            document.getElementById("contador").innerText = contador;
+            mostrarCarrito();
+        }
+
+        function comprarTodo() {
+            alert("Compra realizada con éxito 🛍️");
+            carrito = [];
+            contador = 0;
+            document.getElementById("contador").innerText = 0;
+            mostrarCarrito();
+        }
+
+        function buscar() {
+            let texto = document.getElementById("busqueda").value.toLowerCase();
+            let tarjetas = document.getElementsByClassName("tarjeta");
+
+            for (let i = 0; i < tarjetas.length; i++) {
+                let contenido = tarjetas[i].innerText.toLowerCase();
+
+                if (contenido.includes(texto)) {
+                    tarjetas[i].style.display = "inline-block";
+                } else {
+                    tarjetas[i].style.display = "none";
+                }
+            }
+        }
+
+        function login() {
+            let nombre = prompt("Ingresa tu nombre:");
+            if (nombre) {
+                document.getElementById("usuario").innerText = nombre;
+            }
+        }
+    </script>
+
+    <div class="contenedor">
+
+        <div class="tarjeta"><img src="perfume 1.jpg"><p>Velvet Rose</p><p>rosa, vainilla, almizcle. Aroma dulce y elegante. Ideal para mujeres sofisticadas que buscan dejar una impresión delicada pero inolvidable.</p><p>Q150</p><button onclick="agregar('Velvet Rose',150)">Comprar</button></div>
+
+        <div class="tarjeta"><img src="perfume 2.jpg"><p>Silk Blossom</p><p>Notas: jazmín, flor de cerezo, miel. Aroma floral y fresco. Perfecto para el día a día, brinda una sensación femenina y ligera.</p><p>Q200</p><button onclick="agregar('Silk Blossom',200)">Comprar</button></div>
+
+        <div class="tarjeta"><img src="perfume 3.jpg"><p>Golden Vanilla</p><p>Notas: vainilla, caramelo, coco. Aroma dulce y cálido. Diseñado para mujeres que aman los aromas suaves y acogedores.</p><p>Q160</p><button onclick="agregar('Golden Vanilla',160)">Comprar</button></div>
+
+        <div class="tarjeta"><img src="perfume 4.jpg"><p>Blush Gold</p><p>Notas: frutos rojos, rosa, champán. Aroma frutal y elegante. Fragancia juvenil con un toque de lujo y frescura.</p><p>Q260</p><button onclick="agregar('Blush Gold',260)">Comprar</button></div>
+
+        <div class="tarjeta"><img src="perfume 5.jpg"><p>Crystal Bloom</p><p>Notas: lirio, cítricos, almizcle blanco. Aroma limpio y delicado. Ideal para quienes prefieren aromas suaves y frescos.</p><p>Q185</p><button onclick="agregar('Crystal Bloom',185)">Comprar</button></div>
+
+        <div class="tarjeta"><img src="perfume 6.jpg"><p>Velvet Orchid</p><p>Notas: orquídea negra, vainilla, chocolate blanco. Aroma intenso y elegante. Perfecto para ocasiones especiales y noches elegantes.</p><p>Q230</p><button onclick="agregar('Velvet Orchid',230)">Comprar</button></div>
+
+        <div class="tarjeta"><img src="perfume 7.jpg"><p>Pink Velvet</p><p>Notas: fresa, crema, notas florales. Aroma dulce y juvenil. Fragancia divertida y ligera para uso diario.</p><p>Q140</p><button onclick="agregar('Pink Velvet',140)">Comprar</button></div>
+
+        <div class="tarjeta"><img src="perfume 8.jpg"><p>Velvet Breeze</p><p>Notas: lavanda, pera, almizcle. Aroma fresco y relajante. Ideal para mujeres que buscan un aroma natural y tranquilo.</p><p>Q210</p><button onclick="agregar('Velvet Breeze',210)">Comprar</button></div>
+
+        <div class="tarjeta"><img src="perfume 9.jpg"><p>Ivory Velvet</p><p>Notas: jazmín, coco, vainilla. Aroma cremoso y suave. Aporta una sensación delicada y elegante.</p><p>Q130</p><button onclick="agregar('Ivory Velvet',130)">Comprar</button></div>
+
+        <div class="tarjeta"><img src="perfume 10.jpg"><p>Velvet Fantasy</p><p>Notas: durazno, flor de loto, azúcar glas. Aroma dulce y ligero. Para mujeres soñadoras que aman los aromas suaves.</p><p>Q199</p><button onclick="agregar('Velvet Fantasy',199)">Comprar</button></div>
+
+    </div>
+
+    <footer class="footer">
+        © 2026 Perfumes Velvet & Gold. Todos los derechos reservados.        
+        | WhatsApp | Instagram: @Velvet & Gold | Facebook: @Velvet & Gold
+    </footer>
+
+</body>
+</html>
